@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'top.jessi.eventbus.demo'
-    compileSdkVersion 33
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "top.jessi.eventbus.demo"
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
