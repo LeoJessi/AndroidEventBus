@@ -176,7 +176,7 @@ private void onEventMainThread(User aUser) {
 
 ## 发布历史
 
-### V1.1.0（2024.1.9）Jessi
+### V1.1.1（2024.1.9）Jessi
 
 1. 增加判断是否已经注册方法isRegistered
 2. 增加一个默认实体类EventBean
