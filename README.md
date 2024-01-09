@@ -1,94 +1,95 @@
-# AndroidEventBus
+# ![AndroidEventBus Logo](http://img.blog.csdn.net/20150203120217873)  AndroidEventBus
 
-This is an EventBus library for Android. It simplifies the communication between Activities, Fragments, Threads, Services, etc. and lowers the coupling among them to a great extent, thus making simplifier codes, lower coupling possible and improving code quality.             
-  
-[//]: # (   ****中文版 [README.md]&#40;README-ch.md&#41;.【该项目不再维护】****    )
+  这是一个Android平台的事件总线框架, 它简化了Activity、Fragment、Service等组件之间的交互，很大程度上降低了它们之间的耦合，使得我们的代码更加简洁，耦合性更低，提升我们的代码质量。          
 
-## new feature
+  更多详情请参考[AndroidEventBus 框架发布](http://blog.csdn.net/bboyfeiyu/article/details/43450553);        
 
-1. support sticky event;
+   ****A english readme is here [README-en.md](README-en.md).****    
 
-## AndroidEventBus is adopted in the following app
+## 最新特性
+
+1. 支持 sticky event;
+2. 使用弱引用持有订阅对象。
+
+## 使用了AndroidEventBus的已知App
 * [Accupass - Events around you](https://play.google.com/store/apps/details?id=com.accuvally.android.accupass)     
 * [考拉FM](http://www.wandoujia.com/apps/com.itings.myradio)
 * [羞羞](http://www.wandoujia.com/apps/com.yelong.wesex)
 * [大题小作](http://www.pkdati.com/)
+* [易泊商户](http://www.myebox.cn/)
 * [易方达移动OA](http://www.wandoujia.com/apps/com.efunds.trade)
-* [Novu - Your Health Rewarded](https://play.google.com/store/apps/details?id=com.novu.novu)
-* [魅族手机中的日历应用]()
-  
-## Basic Architecture
- ![arch](http://img.blog.csdn.net/20150426223040789)         
-  
-AndroidEventBus is like the Observer Pattern. It will have the objects which need to subscribe events registered into the EventBus through Function “register” and store such subscription methods and subscription objects in Map. When a user posts an event somewhere, the EventBus will find corresponding subscription object in accordance with the parameter type and tag of the Event and then execute the method in subscription object. These subscription methods will be executed in the Thread Mode designated by the user. For example, mode=ThreadMode. ASNYC means the subscription method is executed in the sub-thread. Please refer to the following instructions for more details.      	
+* [功夫泡](http://gongfupao.com)
+* * [魅族手机中的日历应用]()
 
+`欢迎大家给我反馈使用情况`
 
-## Code Example  
- You can use AndroidEventBus according to the following steps.    
+## 基本结构
+ ![结构图](http://img.blog.csdn.net/20150426223040789)      
+ AndroidEventBus类似于观察者模式,通过register函数将需要订阅事件的对象注册到事件总线中,然后根据@Subscriber注解来查找对象中的订阅方法,并且将这些订阅方法和订阅对象存储在map中。当用户在某个地方发布一个事件时,事件总线根据事件的参数类型和tag找到对应的订阅者对象,最后执行订阅者对象中的方法。这些订阅方法会执行在用户指定的线程模型中,比如mode=ThreadMode.ASYNC则表示该订阅方法执行在子线程中,更多细节请看下面的说明。        	
+
+## 使用AndroidEventBus 
+ 你可以按照下面几个步骤来使用AndroidEventBus.     
          
-* 1. Event-receiving Object      
+*  1. 注册事件接收对象      
 
 ```
-   
 public class YourActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        // register the receiver object
+        // 注册对象
         EventBus.getDefault().register(this);
     }
-    
-   @Override
+   
+      @Override
     protected void onDestroy() {
-        // Don’t forget to unregister !!
+        // 注销
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 }
    
-```      
+```
 
-* 2. Mark the receiving method of the Event-receiving Object with Subscriber annotation.           
+*    2. 通过Subscriber注解来标识事件接收对象中的接收方法        
 
 ```
+
 public class YourActivity extends Activity {
  
     // code ......
     
-    // A receiving method with a default tag will execute on UI thread.
+    // 接收方法,默认的tag,执行在UI线程
     @Subscriber
     private void updateUser(User user) {
         Log.e("", "### update user name = " + user.name);
     }
 
-	// When there is a “my_tag”, only events designated with “my_tag” can 
-	// trigger the function and execute on UI thread when a user posts an event.
+	// 含有my_tag,当用户post事件时,只有指定了"my_tag"的事件才会触发该函数,执行在UI线程
     @Subscriber(tag = "my_tag")
     private void updateUserWithTag(User user) {
         Log.e("", "### update user with my_tag, name = " + user.name);
     }
     
-	// When there is a “my_tag”, only events designated with “my_tag” can trigger the function.
-	// The function will execute on the same thread as the one post function is executed on.   
+    // 含有my_tag,当用户post事件时,只有指定了"my_tag"的事件才会触发该函数,
+    // post函数在哪个线程执行,该函数就执行在哪个线程    
     @Subscriber(tag = "my_tag", mode=ThreadMode.POST)
     private void updateUserWithMode(User user) {
         Log.e("", "### update user with my_tag, name = " + user.name);
     }
 
-	// When there is a “my_tag”, only events designated with “my_tag” can trigger  
-	// the function and execute on an independent thread when a user posts an event.
+	// 含有my_tag,当用户post事件时,只有指定了"my_tag"的事件才会触发该函数,执行在一个独立的线程
     @Subscriber(tag = "my_tag", mode = ThreadMode.ASYNC)
     private void updateUserAsync(User user) {
         Log.e("", "### update user async , name = " + user.name + ", thread name = " + Thread.currentThread().getName());
     }
 }
 
-```           
+```
 
-   User class is approximately as follows :    
-   
+   User类大致如下 : 
 ``` 
     public class User  {
         String name ;
@@ -96,12 +97,13 @@ public class YourActivity extends Activity {
             name = aName ;
         }
     }
-```        
+```
 
-The receiving function will use “tag” to mark receivable types of events, just like designating “action” in BroadcastReceiver, which can deliver messages precisely. Mode can designate which thread the object function will be executed on but defaultly it will be executed on UI thread for the purpose of convenient UI update for users. When the object method executes long-running operations, the “mode” can be set as ASYNC so as to be executed on sub-thread.           
+
+  接收函数使用tag来标识可接收的事件类型，与BroadcastReceiver中指定action是一样的,这样可以精准的投递消息。mode可以指定目标函数执行在哪个线程,默认会执行在UI线程,方便用户更新UI。目标方法执行耗时操作时,可以设置mode为ASYNC,使之执行在子线程中。      
          
-  
-* 3. To post an event in other components such as Activities, Fragments or Services.           
+
+*    3. 在其他组件,例如Activity, Fragment,Service中发布事件       
 
 ```
     
@@ -109,91 +111,93 @@ The receiving function will use “tag” to mark receivable types of events, ju
     
     // post a event with tag, the tag is like broadcast's action
     EventBus.getDefault().post(new User("mr.simple"), "my_tag");
-    
-    // post sticky event
-    EventBus.getDefault().postSticky(new User("sticky"));
 
-```         
+```
 
-  After posting the event, the object registered with the event type will receive responsive event.           
+  发布事件之后,注册了该事件类型的对象就会接收到响应的事件.         
 
 
-## Usage 
-### integrate with jar
-It will be enough to add the jar file into the “quote” part of the Project, AndroidEventBus.[AndroidEventBus.jar](lib/androideventbus-1.0.5.1.jar?raw=true "download")      
+## 集成
+### jar文件集成
+将jar文件添加到工程中的引用中即可,[AndroidEventBus.jar下载](lib/androideventbus-1.0.5.1.jar?raw=true "点击下载到本地")      
 
+### Android Studio集成
 
-### Gradle
-
-* Add dependency in build.gradle of the Module .
+*   在Module的build.gradle添加依赖
 
 ```
 dependencies {
-
-    // add AndroidEventBus dependency
-    compile 'org.simple:androideventbus:1.0.5.1'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    
+    // 添加依赖
+	compile 'org.simple:androideventbus:1.0.5.1'
+	
 }
-```    
-               
-## Differing from the EventBus of greenrobot
-   1. <a href="https://github.com/greenrobot/EventBus" target="_blank">EventBus</a> of greenrobot is a popular open source library but its user experience is not as friendly. For example, its subscription function is required to start with onEvent, and if a function’s execution thread needs to be designated, it is necessary to add the mode name of execution thread in the name of the function according to certain rules. This may be difficult to understand. Let’s say, if I want the receiving function of some event to be executed on the main thread, I am required to name it as onEventMainThread. What if two of my subscribers share the same parameter name and both are executed on the receiving function of the main thread? It seems impossible to deal with it in such case. And a set-in-stone function name can’t properly reflect the function of the Function, i.e., the self-documentation of the function. AndroidEventBus uses annotation to mark receiving function, by which the function name is not limited. For example, I can name the receiving function as updateUserInfo(Person info). It’s more flexible.
-   2. Another difference lies in that AndroidEventBus adds an extra tag to mark the tag of receivable event of every receiving function, just like the action in Broadcast. For instance, one Broadcast corresponds to one or more actions, and you need to designate the action of a broadcast before you can publish one and the broadcast receiver can receive. EventBus of greenrobot marks whether a function can receive a certain event only by the parameter type of the function. In this way, the function can receive all the events of the same parameter type, resulting in a limited delivery principle. Let’s say, if there are two events: one is about adding user and the other is about deleting user. Their parameter types are both User. Then the EventBus of greenrobot would be lke:         
-   
+```
+
+
+## 与greenrobot的EventBus的不同
+   1. greenrobot的<a href="https://github.com/greenrobot/EventBus" target="_blank">EventBus</a>是一个非常流行的开源库,但是它在使用体验上并不友好,例如它的订阅函数必须以onEvent开头,并且如果需要指定该函数运行的线程则又要根据规则将函数名加上执行线程的模式名,这么说很难理解,比如我要将某个事件的接收函数执行在主线程,那么函数名必须为onEventMainThread。那如果我一个订阅者中有两个参数名相同,且都执行在主线程的接收函数呢? 这个时候似乎它就没法处理了。而且规定死了函数命名,那就不能很好的体现该函数的功能,也就是函数的自文档性。AndroidEventBus使用注解来标识接收函数,这样函数名不受限制,比如我可以把接收函数名写成updateUserInfo(Person info),这样就灵活得多了。    
+   2. 另一个不同就是AndroidEventBus增加了一个额外的tag来标识每个接收函数可接收的事件的tag,这类似于Broadcast中的action，比如每个Broadcast对应一个或者多个action,当你发广播时你得指定这个广播的action,然后对应的广播接收器才能收到.greenrobot的EventBus只是根据函数参数类型来标识这个函数是否可以接收某个事件,这样导致只要是参数类型相同,任何的事件它都可以接收到,这样的投递原则就很局限了。比如我有两个事件,一个添加用户的事件, 一个删除用户的事件,他们的参数类型都为User,那么greenrobot的EventBus大概是这样的:    
+
 ```
 
 private void onEventMainThread(User aUser) {
 	// code 
 }
-```        
+```
+   如果你有两个同参数类型的接收函数，并且都要执行在主线程,那如何命名呢 ？  即使你有两个符合要求的函数吧,那么我实际上是添加用户的事件,但是由于EventBus只根据事件参数类型来判断接收函数,因此会导致两个函数都会被执行。AndroidEventBus的策略是为每个事件添加一个tag,参数类型和tag共同标识一个事件的唯一性,这样就确保了事件的精确投递。       
 
-If there are two receiving functions of the same parameter type and both are executed on the main thread, how to name them distinctively? Supposing that there are two functions meeting the requirements and the event is adding user, but because the EventBus judges receiving function only by parameter type of the event, both function will be executed. The strategy of AndroidEventBus is to add a “tag” for each event, and use parameter type and “tag” to jointly mark the uniqueness of the vent so as to ensure precise delivery.      
+   这就是AndroidEventBus和greenrobot的EventBus的不同,当然greenrobot出于性能的考虑这么处理也可以理解，但是我们在应用中发布的事件数量是很有限的，性能差异可以忽略，但使用体验上却是很直接的。另外由于本人对greenrobot的EventBus前世今生并不是很了解,很可能上述我所说的有误,如果是那样,欢迎您指出。                
 
-These are the differences between AndroidEventBus and EventBus of greenrobot. But it is understandable for greenrobot’s approach considering performance. And what I try to express is that there are very limited quantity of events posted in an App and the performance difference is negligible while user experience is well sensible. What I need to point out is that I know little about the ins and outs of EventsBus of greenrobot and there could be errors among what I’ve mentioned. If that happens, you are more than welcome to correct me.        
+### 与EventBus、otto的特性对比
+
+|         名称         | 订阅函数是否可执行在其他线程 |         特点          |
+|---------------------|-----------------------|---------------------------------|
+| [greenrobot的EventBus](https://github.com/greenrobot/EventBus)  |  是  | 使用name pattern模式，效率高，但使用不方便。|
+| [square的otto](https://github.com/square/otto)    | 否  | 使用注解，使用方便，但效率比不了EventBus。   |
+| [AndroidEventBus]()  |  是  | 使用注解，使用方便，但效率比不上EventBus。订阅函数支持tag(类似广播接收器的Action)使得事件的投递更加准确，能适应更多使用场景。 | 
 
 
-### Comparison Of Characteristics
-
-|         library     | Whether the subscription function can be executed on other thread |         features          |
-|---------------------|-----------------------|------------------|
-| [greenrobot's EventBus](https://github.com/greenrobot/EventBus)  |  yes  | It adopts name pattern which is efficient but inconvenient to use. |
-| [square's otto](https://github.com/square/otto)    |  no  | It is convenient to use annotation but it’s not as efficient as EventBus|   
-| [AndroidEventBus]()  |  yes  | It is convenient to use annotation but it’s not as efficient as EventBus. The subscription supports tag (like the Action in Broadcast Receiver) which can make event delivery more accurate and applicable to more usage scenarios.  |   
-
-## Proguard
+## 混淆配置
 
 ```
--keep class org.simple.** { *; }
--keep interface org.simple.** { *; }
+-keep class top.jessi.** { *; }
+-keep interface top.jessi.** { *; }
 -keepclassmembers class * {
-    @org.simple.eventbus.Subscriber <methods>;
+    @top.jessi.eventbus.Subscriber <methods>;
 }
 -keepattributes *Annotation*
 ```
 
-## Thanks Note         
-I really appreciate E-pal “淡蓝色的星期三” for his proposing of bugs and feedback and I hope more and more friends will join our team of AndroidEventBus Development.    
-   
- 
-## Release Note
-
-### V1.0.5 ( 2015.6.20 )
-1. fix bugs.
-
-### V1.0.4 ( 2015.5.23 )
-1. support Sticky Events and use WeakReference to hold the Subscriber.
+## 感谢
+   在此非常感谢网友“淡蓝色的星期三”提出的bug以及反馈,也希望更多的朋友能够加入到Android EventBus的开发中来。  
 
 
-### V1.0.2 ( 2015.2.28 )
-Solved the problem of failing to receive an event when the parameter of the subscription method is a basic type (int, Boolean, etc.)
+## 发布历史
 
-### V1.0.1 ( 2015.2.13 )
-1. Solved the problem that the subscription method can’t receive an event because the subscription method is delivered as sub-type when posting an event while it was originally of basic type.     
+### V1.1.0（2024.1.9）Jessi
+
+1. 增加判断是否已经注册方法isRegistered
+2. 增加一个默认实体类EventBean
+
+### V1.0.4   ( 2015.5.23 )
+
+1. 支持Sticky事件;
+2. 弱引用持有订阅对象。
 
 
-### v1.0 ( 2015.2.9 )
-1.	Release an EventBus library; use @Subscriber annotation to mark subscription method
-2.	The subscription method supports “tag” mark, which makes event delivery more precise.
-    
+### V1.0.2   ( 2015.2.28 )
+1. 修复订阅方法的参数是基本类型( int, boolean等 )不能接收事件的问题。
+
+### 1.0.1    ( 2015.2.13 )
+1. 修复订阅方法是基类,而发布事件时传递的是子类型导致订阅方法无法接收到事件的问题。
+
+
+### v1.0     ( 2015.2.9 )
+1. 事件总线框架发布，使用@Subscriber注解标识订阅方法；
+2. 订阅方法支持tag标识，使得事件投递更加精准。      
+
 
 ## License
 ```
@@ -210,4 +214,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-```      
+```
