@@ -206,7 +206,7 @@ public class MenuFragment extends BaseFragment {
     @Subscriber
     private void subcribeList(List<User> users) {
         for (int i = 0; i < users.size(); i++) {
-            Log.e(getTag(), "### user name = " + users.get(i));
+            // Log.e(getTag(), "### user name = " + users.get(i));
         }
     }
 
@@ -236,8 +236,8 @@ public class MenuFragment extends BaseFragment {
      */
     @Subscriber(mode = ThreadMode.POST)
     private void invokeInPostThread(String event) {
-        Log.e(getTag(), "### invokeInPostThread invoke in thread =  "
-                + Thread.currentThread().getName());
+        // Log.e(getTag(), "### invokeInPostThread invoke in thread =  "
+        //         + Thread.currentThread().getName());
     }
 
     /**
@@ -270,7 +270,7 @@ public class MenuFragment extends BaseFragment {
          */
         @Subscriber(tag = THREAD_TAG)
         private void sayHello(String name) {
-            Log.d(getTag(), "### hello, " + name + " -->  in " + getName());
+            // Log.d(getTag(), "### hello, " + name + " -->  in " + getName());
         }
 
         @Override

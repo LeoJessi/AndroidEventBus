@@ -56,7 +56,7 @@ public class StickyActivity extends Activity {
         nameTv.setText(info.name);
         ageTv.setText("age ----- 32");
 
-        Log.e("", "### 找到 接到sticky消息 " + info.name);
+        // Log.e("", "### 找到 接到sticky消息 " + info.name);
         // 接受到事件之后可以手动移除Sticky事件
         EventBus.getDefault().removeStickyEvent(info.getClass());
     }

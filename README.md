@@ -176,6 +176,10 @@ private void onEventMainThread(User aUser) {
 
 ## 发布历史
 
+### V1.1.3（2024.1.16）Jessi
+
+1. 修改部分日志
+
 ### V1.1.2（2024.1.9）Jessi
 
 1. 增加判断是否已经注册方法isRegistered

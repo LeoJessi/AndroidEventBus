@@ -202,7 +202,7 @@ public final class EventBus {
      */
     public void post(Object event, String tag) {
         if (event == null) {
-            Log.e(this.getClass().getSimpleName(), "The event object is null");
+            // Log.e(this.getClass().getSimpleName(), "The event object is null");
             return;
         }
         mLocalEvents.get().offer(new EventType(event.getClass(), tag));
@@ -226,7 +226,7 @@ public final class EventBus {
      */
     public void postSticky(Object event, String tag) {
         if (event == null) {
-            Log.e(this.getClass().getSimpleName(), "The event object is null");
+            // Log.e(this.getClass().getSimpleName(), "The event object is null");
             return;
         }
         EventType eventType = new EventType(event.getClass(), tag);
@@ -442,8 +442,8 @@ public final class EventBus {
             // 事件
             Object event = eventType.event;
             for (EventType foundEventType : eventTypes) {
-                Log.e("", "### 找到的类型 : " + foundEventType.paramClass.getSimpleName()
-                        + ", event class : " + event.getClass().getSimpleName());
+                // Log.e("", "### 找到的类型 : " + foundEventType.paramClass.getSimpleName()
+                //         + ", event class : " + event.getClass().getSimpleName());
                 final List<Subscription> subscriptions = mSubcriberMap.get(foundEventType);
                 if (subscriptions == null) continue;
                 for (Subscription subItem : subscriptions) {

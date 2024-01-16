@@ -42,6 +42,6 @@ public class BaseFragment extends Fragment {
 
     @Subscriber(tag = SUPER_TAG)
     private void privateMethodInSuper(User user) {
-        Log.e(getTag(), "### supper private Method In Super invoked ( default tag ) ");
+        // Log.e(getTag(), "### supper private Method In Super invoked ( default tag ) ");
     }
 }
