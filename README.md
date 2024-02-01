@@ -176,6 +176,10 @@ private void onEventMainThread(User aUser) {
 
 ## 发布历史
 
+### V1.2.4 (2024.2.1) Jessi
+
+1. 升级java17，agp8.0，以及更新部分依赖
+
 ### V1.1.3（2024.1.16）Jessi
 
 1. 修改部分日志
